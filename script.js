@@ -1,32 +1,4 @@
-const myInitCallback = function() {
-  if (document.readyState == 'complete') {
-    google.search.cse.element.render(
-        {
-          div: "search-input",
-          tag: 'search',
-          attributes: {
-            enableAutoComplete: true
-          }
-         });
-  } else {
-    google.setOnLoadCallback(function() {
-        google.search.cse.element.render(
-            {
-              div: "search-input",
-              tag: 'search'
-            });
-    }, true);
-  }
-};
-
-// Insert it before the Search Element code snippet so the global properties like parsetags and callback
-// are available when cse.js runs.
-window.__gcse = {
-  initializationCallback: myInitCallback
-};
 const myResultsReadyCallback = function (name, q, promos, results, resultsDiv) {
-
-  console.log('results ', results);
 
   const makeResultParts = (result) => {
     const anchor = createAnchorElement(result.url);
@@ -46,11 +18,11 @@ const myResultsReadyCallback = function (name, q, promos, results, resultsDiv) {
   }
 
   function createThumbnailColumn(result) {
-    const formattedDuration = result?.richSnippet?.videoobject ? convertDuration(result.richSnippet?.videoobject?.duration) : '00:00';
+    const formattedDuration = result?.richSnippet?.videoobject ? convertDuration(result.richSnippet.videoobject.duration) : '00:00';
     const thumbnailCol = document.createElement('div');
     thumbnailCol.classList.add('thumbnail-column');
 
-    const thumbnail = createThumbnail(result.richSnippet?.imageobject?.url);
+    const thumbnail = createThumbnail(result.richSnippet.imageobject.url);
     const videoTime = createVideoTime(formattedDuration);
 
     thumbnailCol.append(thumbnail, videoTime);
@@ -77,7 +49,7 @@ const myResultsReadyCallback = function (name, q, promos, results, resultsDiv) {
 
     const videoTitle = createVideoTitle(result?.title);
     const videoAuthor = createVideoAuthor(result.richSnippet?.person?.name);
-    const videoSubInfo = createVideoSubInfo(result.richSnippet?.metatags?.ogSiteName, result.richSnippet?.videoobject ? result.richSnippet?.videoobject.interactioncount : '0');
+    const videoSubInfo = createVideoSubInfo(result.richSnippet?.metatags?.ogSiteName, result.richSnippet.videoobject ? result.richSnippet.videoobject.interactioncount : '0');
 
     videoInfo.appendChild(videoTitle);
     videoInfo.appendChild(videoAuthor);
@@ -143,7 +115,8 @@ const myResultsReadyCallback = function (name, q, promos, results, resultsDiv) {
 
     const filteredResults = results.filter(
       (result) =>
-        result.richSnippet?.metatags?.ogType
+        result.richSnippet?.videoobject?.genre === 'Music' &&
+        result.richSnippet?.videoobject?.interactioncount
     );
     filteredResults.sort(
       (a, b) =>
